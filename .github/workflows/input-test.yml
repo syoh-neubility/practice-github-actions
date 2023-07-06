@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: workflow inuts 테스트
 
 # Controls when the workflow will run
 on:
@@ -16,11 +16,12 @@ on:
       deploy_env:
         description: '배포 위치'
         required: true
-        default: 'prod'
+        default: 'dev'
         type: choice
         options:
           - prod
           - staging
+          - dev
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,9 +37,19 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo Hello, world!
+        run: echo "Hello, world!"
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          echo deploy_env ${{ inputs.deploy_env }}
+          branch_name=${GITHUB_REF##*/}
+          echo "branch: $branch_name"
+          echo "deploy_env: ${{ inputs.deploy_env }}"
+
+          deploy_env=${{ inputs.deploy_env }}
+          if [[ $deploy_env == "prod" && $branch_name != "main" ]]
+          then
+            echo "main 브랜치만 prod 환경에 배포할 수 있습니다. 현재 브랜치: $branch_name"
+            deploy_env=undefined
+          fi
+          echo "deploy_env: $deploy_env"
