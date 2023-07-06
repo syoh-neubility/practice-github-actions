@@ -45,6 +45,7 @@ jobs:
           echo "deploy_env: ${{ inputs.deploy_env }}"
 
           deploy_env=${{ inputs.deploy_env }}
+          event_name=${{ github.event_name }}
           if [[ ${{ github.event_name }} == "push" && $branch_name == "develop" ]]
           then
             deploy_env=dev
