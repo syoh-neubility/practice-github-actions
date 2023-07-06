@@ -6,9 +6,9 @@ name: workflow inuts 테스트
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -47,6 +47,14 @@ jobs:
           echo "deploy_env: ${{ inputs.deploy_env }}"
 
           deploy_env=${{ inputs.deploy_env }}
+          if [[ $deploy_env == "" ]]
+          then
+            if [[ branch_name == "develop" ]]
+            then
+              deploy_env=dev
+            fi
+          fi
+
           if [[ $deploy_env == "prod" && $branch_name != "main" ]]
           then
             echo "main 브랜치만 prod 환경에 배포할 수 있습니다. 현재 브랜치: $branch_name"
