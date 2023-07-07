@@ -33,10 +33,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo "Hello, world!"
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
@@ -46,6 +42,7 @@ jobs:
 
           deploy_env=${{ inputs.deploy_env }}
           event_name=${{ github.event_name }}
+          echo "event_name: $event_name"
           if [[ ${{ github.event_name }} == "push" && $branch_name == "develop" ]]
           then
             deploy_env=dev
@@ -54,6 +51,6 @@ jobs:
           if [[ $deploy_env == "prod" && $branch_name != "main" ]]
           then
             echo "main 브랜치만 prod 환경에 배포할 수 있습니다. 현재 브랜치: $branch_name"
-            deploy_env=undefined
+            exit 1
           fi
           echo "deploy_env: $deploy_env"
